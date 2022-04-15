@@ -27,8 +27,6 @@ import java.util.*
 @SmallTest
 class RemindersDaoTest {
 
-//    TODO: Add testing implementation to the RemindersDao.kt - Done
-
     @get:Rule
     val instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -69,7 +67,6 @@ class RemindersDaoTest {
         // Then database has size and contains the given reminderData
         assertThat(dao.getReminders(), Matchers.hasSize(1))
         assertThat(dao.getReminders(), Matchers.contains(reminderData))
-
 
     }
 
@@ -120,7 +117,5 @@ class RemindersDaoTest {
         // Then database is empty
         assertThat(dao.getReminders(), Matchers.empty())
     }
-
-
 
 }

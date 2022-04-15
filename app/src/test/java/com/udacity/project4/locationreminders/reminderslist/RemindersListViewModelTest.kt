@@ -24,8 +24,6 @@ import org.hamcrest.MatcherAssert.assertThat
 @Config(sdk = [Build.VERSION_CODES.Q])
 class RemindersListViewModelTest {
 
-    //TODO: provide testing to the RemindersListViewModel and its live data objects - Done
-
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
     private lateinit var fakeDataSource: FakeDataSource

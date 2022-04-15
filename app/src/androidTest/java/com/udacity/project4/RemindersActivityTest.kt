@@ -1,16 +1,39 @@
 package com.udacity.project4
 
 import android.app.Application
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.ViewAssertion
+import androidx.test.espresso.action.CloseKeyboardAction
+import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.assertion.ViewAssertions
+import androidx.test.espresso.assertion.ViewAssertions.matches
+import androidx.test.espresso.matcher.RootMatchers.withDecorView
+import androidx.test.espresso.matcher.ViewMatchers
+import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import androidx.test.rule.ActivityTestRule
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
+import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
+import com.udacity.project4.locationreminders.reminderslist.ReminderDataItem
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.EspressoIdlingResource
+import com.udacity.project4.util.monitorActivity
 import kotlinx.coroutines.runBlocking
+import org.hamcrest.CoreMatchers.not
+import org.junit.After
 import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -18,6 +41,8 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
+import java.util.*
+
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -27,6 +52,12 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
+    private val dataBindingIdlingResource = DataBindingIdlingResource()
+    private val reminderTitleText = "End to End Test"
+    private val reminderDescriptionText = "Reminder Description"
+
+    @Rule
+    @JvmField var activityRule: ActivityTestRule<RemindersActivity?>? = ActivityTestRule(RemindersActivity::class.java)
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -65,7 +96,64 @@ class RemindersActivityTest :
         }
     }
 
+    @Before
+    fun registerIdlingResources() {
+        IdlingRegistry.getInstance().register(dataBindingIdlingResource)
+    }
 
-//    TODO: add End to End testing to the app
+    @After
+    fun unregisterIdlingResources() {
+        IdlingRegistry.getInstance().unregister(dataBindingIdlingResource)
+    }
+
+    @Test
+    fun reminder_displayedInUI (){
+
+        val scenario = ActivityScenario.launch(RemindersActivity::class.java)
+        dataBindingIdlingResource.monitorActivity((scenario))
+
+        // Timeout to see that the reminder list is cleared before
+        Thread.sleep(2000)
+
+        // No Data shown in Reminders List
+        onView(withId(R.id.noDataTextView))
+            .check(ViewAssertions.matches(ViewMatchers.isDisplayed()))
+
+        // Click the FAB Button
+        onView(withId(R.id.addReminderFAB)).perform(click())
+        Thread.sleep(1000)
+
+        // Set title and description of new reminder
+        onView(withId(R.id.reminderTitle)).perform(typeText(reminderTitleText))
+        Thread.sleep(1000)
+
+        onView(withId(R.id.reminderDescription)).perform(typeText(reminderDescriptionText), closeSoftKeyboard())
+        Thread.sleep(1000)
+
+        // navigate to SelectLocationFragment
+        onView(withId(R.id.selectLocationTextView)).perform(click())
+        Thread.sleep(1000)
+
+        // set POI marker
+        onView(withId(R.id.map)).perform(longClick())
+        Thread.sleep(2000)
+        onView(withId(R.id.saveButton)).perform(click())
+        Thread.sleep(2000)
+
+        // then assert the reminder displayed
+        onView(withText(reminderTitleText)).check(matches(isDisplayed()))
+        onView(withText(reminderDescriptionText)).check(matches(isDisplayed()))
+
+        onView(withId(R.id.saveReminder)).perform(click())
+        Thread.sleep(2000)
+
+        // test toast message
+        onView(withText(R.string.reminder_saved))
+            .inRoot(withDecorView(not(activityRule?.getActivity()?.getWindow()?.getDecorView())))
+            .check(matches(isDisplayed()))
+
+        scenario.close()
+
+    }
 
 }

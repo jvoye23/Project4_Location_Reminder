@@ -112,8 +112,4 @@ inline fun <reified F : Fragment> DataBindingIdlingResource.monitorFragment(
         this@monitorFragment.activity = this@withFragment.requireActivity()
     }
 }
-//fun DataBindingIdlingResource.monitorFragment(fragmentScenario: FragmentScenario<out Fragment>) {
-//    fragmentScenario.onFragment {
-//        this.activity = it.requireActivity()
-//    }
-//}
+
