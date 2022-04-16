@@ -9,12 +9,7 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.dto.Result
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.test.TestCoroutineDispatcher
-import kotlinx.coroutines.test.TestCoroutineScope
 import kotlinx.coroutines.test.runBlockingTest
-import org.hamcrest.CoreMatchers.`is`
-import org.hamcrest.CoreMatchers.instanceOf
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers
 import org.junit.After
@@ -30,8 +25,6 @@ import java.util.*
 @MediumTest
 class RemindersLocalRepositoryTest {
 
-//    TODO: Add testing implementation to the RemindersLocalRepository.kt - Done
-
     @get:Rule
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
@@ -40,9 +33,6 @@ class RemindersLocalRepositoryTest {
 
     private lateinit var repository: RemindersLocalRepository
     private lateinit var database: RemindersDatabase
-
-    //private val testDispatcher = TestCoroutineDispatcher()
-    //private val testScope = TestCoroutineScope(testDispatcher)
 
     @Before
     fun initializeDatabaseAndRepository() {
@@ -120,7 +110,6 @@ class RemindersLocalRepositoryTest {
     @Test
     fun getReminderByIdFails() = mainCoroutineRule.runBlockingTest{
 
-
             // Given reminderData
             val reminderData = ReminderDTO(
                 title = "Unit test DAO",
@@ -138,7 +127,6 @@ class RemindersLocalRepositoryTest {
             // Then
             assertThat(result.message, Matchers.`is`("Reminder not found!"))
             assertThat(result.statusCode, Matchers.nullValue())
-
 
     }
 

@@ -1,19 +1,14 @@
 package com.udacity.project4.locationreminders.reminderslist
 
-import android.content.Context
 import android.os.Bundle
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.fragment.app.testing.launchFragmentInContainer
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.test.core.app.ApplicationProvider
-import androidx.test.core.app.ApplicationProvider.getApplicationContext
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.IdlingRegistry
-import androidx.test.espresso.ViewAssertion
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions
-import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.MediumTest
@@ -23,14 +18,9 @@ import com.udacity.project4.locationreminders.data.dto.ReminderDTO
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.MainCoroutineRule
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
-import com.udacity.project4.util.DataBindingIdlingResource
-import com.udacity.project4.util.EspressoIdlingResource
-import com.udacity.project4.util.monitorFragment
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.test.runBlockingTest
-import org.junit.After
-import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
@@ -58,8 +48,6 @@ class ReminderListFragmentTest {
 
     @get:Rule
     var mainCoroutineRule = MainCoroutineRule()
-
-
 
     @Before
     fun setup() = runBlocking{
@@ -89,6 +77,7 @@ class ReminderListFragmentTest {
     @Test
     fun clickFabButton_navigateToSaveReminderFragment() {
         runBlockingTest {
+
             // Given this Fragment Scenario
             val scenario = launchFragmentInContainer<ReminderListFragment>(
                 Bundle.EMPTY,
@@ -101,15 +90,12 @@ class ReminderListFragmentTest {
             }
 
             // When clicking the FAB Button
-
             onView(withId(R.id.addReminderFAB)).perform(click())
 
             // Then navigate
             verify(navController).navigate(ReminderListFragmentDirections.toSaveReminder())
             Thread.sleep(2000)
         }
-
-
     }
 
     @Test
@@ -141,7 +127,6 @@ class ReminderListFragmentTest {
         }
 
         Thread.sleep(2000)
-
     }
 }
 
